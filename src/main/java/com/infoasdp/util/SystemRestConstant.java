@@ -7,6 +7,7 @@ public class SystemRestConstant {
 
 		public static final String USER_CONTROLLER = "/user";
 		public static final String SAVE_USER_ADDR = "/saveUser";
+		public static final String FIND_USER_DETAIL_ADDR = "/findUserDetail";
 		public static final String SAVE_USER_AUTH = "SAVE_PRE_SCREENING";
 	}
 }

@@ -47,14 +47,16 @@ public class UserServiceTest {
 	@Test
 	public void saveUserTest() throws Exception{
 		UserEntity user = value();
-		//userService.saveUser(user);
-		Assert.assertEquals(1, userRepo.count());
+		userService.saveUser(user);
+		Assert.assertEquals(2, userRepo.count());
 	}
 	
 	public UserEntity value(){
 		UserEntity user = new UserEntity();
-		user.setUserId("asdp@infoasdp.com");
+		user.setUserId("septa.uddin15@gmail.com");
+		user.setName("SEPTA");
 		user.setAlamat("JAKARTA");
+		user.setPassword("password");
 		user.setNoHp("081809844015");
 		user.setUserRole(userRoleRepo.findOne("1"));
 		return user;

@@ -32,7 +32,7 @@ public class Application
 	}
     
     @Bean
-	public AuthenticationEngine authenticationEngineDBImpl() {
+	public AuthenticationEngine authenticationEngineImpl() {
 		return new AuthenticationEngineImpl();
 	}
 }

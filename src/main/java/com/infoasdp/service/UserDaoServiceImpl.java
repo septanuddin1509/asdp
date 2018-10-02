@@ -1,5 +1,20 @@
 package com.infoasdp.service;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,10 +24,13 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.infoasdp.login.entity.UserEntity;
 import com.infoasdp.repository.UserRepository;
+import com.infoasdp.util.CommonPageUtil;
 import com.infoasdp.util.CommonPaging;
 import com.infoasdp.util.JsonUtil;
 import com.infoasdp.util.StringFunction;
@@ -26,12 +44,9 @@ public class UserDaoServiceImpl implements UserDaoService{
 	
 	@Autowired
 	private UserRepository userRepo;
-
-	@Override
-	public String searchUser(UserEntity request) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	@Autowired
+	CommonPageUtil pageUtil;
 
 	@Override
 	public synchronized String saveUser(UserEntity request) throws Exception {
@@ -48,6 +63,8 @@ public class UserDaoServiceImpl implements UserDaoService{
 				throw new UserException("NOT_FOUND", "User not found !");
 			}
 			BeanUtils.copyProperties(request, toUpdate);
+		}else{
+			sendmail(request);
 		}
 		userRepo.save(toUpdate);
 		
@@ -76,9 +93,8 @@ public class UserDaoServiceImpl implements UserDaoService{
 	}
 
 	@Override
-	public String findOneUser(UserEntity request) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public UserEntity findOneUser(UserEntity request) throws Exception {
+		return userRepo.findOne(request.getId());
 	}
 
 	@Override
@@ -96,20 +112,58 @@ public class UserDaoServiceImpl implements UserDaoService{
 	}
 
 	@Override
-	public String updateUser(UserEntity request) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UserEntity getUsersByName(String name) {
-		return userRepo.findOneByUserId(name);
+	public UserEntity getUsersByName(String userId) {
+		return userRepo.findOneByUserId(userId);
 	}
 
 	@Override
 	public CommonPaging<UserEntity> getUserWithPaging(String search, String user, int page) {
-		// TODO Auto-generated method stub
-		return null;
+		Pageable pageable = pageUtil.generateDefaultPageRequest(page);
+		Page<UserEntity> paging = userRepo.findByUserIdNotAndUserIdContaining(user, search, pageable);
+		return new CommonPaging<>(paging);
 	}
+	
+	private void sendmail(UserEntity request) throws AddressException, MessagingException, IOException {
+		   Properties props = new Properties();
+		   props.put("mail.smtp.auth", "true");
+		   props.put("mail.smtp.starttls.enable", "true");
+		   props.put("mail.smtp.host", "smtp.gmail.com");
+		   props.put("mail.smtp.port", "587");
+		   
+		   Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+		      protected PasswordAuthentication getPasswordAuthentication() {
+		         return new PasswordAuthentication("septa.rf2018@gmail.com", "SEPTA1509");
+		      }
+		   });
+		   Message msg = new MimeMessage(session);
+		   msg.setFrom(new InternetAddress("septa.rf2018@gmail.com", false));
+
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(request.getUserId()));
+		   msg.setSubject("welcome to your new infoASDP Account");
+		   String messageMail = "<html> "
+		   		+ "<body><h3>Hi "+request.getName()+",</h3>"
+		   		+ "<p>"
+		   		+ "Your account already created!<br/>"
+		   		+ "Username : "+request.getUserId()+"<br/>"
+				+ "Password : "+request.getPassword()+"<br/>"
+				+ "Please change your password for security privacy<br/>"
+		   		+ "<h3>Thanks, <br/>Regards,<br/>Admin infoASDP</h3>"
+		   		+ "</p>"
+		   		+ "</body></html>";
+		   msg.setContent(messageMail, "text/html");
+		   msg.setSentDate(new Date());
+
+		   MimeBodyPart messageBodyPart = new MimeBodyPart();
+		   messageBodyPart.setContent(messageMail, "text/html");
+
+		   Multipart multipart = new MimeMultipart();
+		   multipart.addBodyPart(messageBodyPart);
+		   /*MimeBodyPart attachPart = new MimeBodyPart();
+
+		   attachPart.attachFile("/var/tmp/image19.png");
+		   multipart.addBodyPart(attachPart);*/
+		   msg.setContent(multipart);
+		   Transport.send(msg);   
+		}
 	
 }
