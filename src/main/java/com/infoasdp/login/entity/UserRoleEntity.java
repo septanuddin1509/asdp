@@ -6,11 +6,11 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 
@@ -30,7 +30,7 @@ public class UserRoleEntity extends AuditEntity implements Serializable{
 	@OneToMany(mappedBy = UserEntity.Constant.USER_ROLE_FIELD)
 	private Set<UserEntity> user;
 	
-	@ManyToMany(mappedBy = "userRole")
+	@OneToMany(mappedBy = "userRole")
 	private Set<MenuRoleEntity> menuRole;
 	
 	public Set<MenuRoleEntity> getMenuRole() {

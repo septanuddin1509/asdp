@@ -1,14 +1,13 @@
 package com.infoasdp.login.entity;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -26,29 +25,29 @@ public class MenuRoleEntity  extends AuditEntity implements Serializable{
 	@GenericGenerator(name = "system-uuid", strategy = "uuid")
 	private String id;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name="user")
-	private Set<UserRoleEntity> userRole;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="user_role")
+	private UserRoleEntity userRole;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="menu")
-	private Set<MenuEntity> menu;
+	private MenuEntity menu;
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Set<UserRoleEntity> getUserRole() {
+	public UserRoleEntity getUserRole() {
 		return userRole;
 	}
-	public void setUserRole(Set<UserRoleEntity> userRole) {
+	public void setUserRole(UserRoleEntity userRole) {
 		this.userRole = userRole;
 	}
-	public Set<MenuEntity> getMenu() {
+	public MenuEntity getMenu() {
 		return menu;
 	}
-	public void setMenu(Set<MenuEntity> menu) {
+	public void setMenu(MenuEntity menu) {
 		this.menu = menu;
 	}
 	public static class Constant {

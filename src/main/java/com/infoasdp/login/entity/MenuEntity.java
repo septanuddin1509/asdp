@@ -5,7 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -22,7 +22,7 @@ public class MenuEntity extends AuditEntity implements Serializable{
 	private String url;
 	private String parent;
 	
-	@ManyToMany(mappedBy = "menu")
+	@OneToMany(mappedBy = "menu")
 	private Set<MenuRoleEntity> menuRole;
 	
 	public Set<MenuRoleEntity> getMenuRole() {
