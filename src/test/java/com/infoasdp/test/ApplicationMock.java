@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.infoasdp.Application;
-import com.infoasdp.DaoSpringConfig;
+import com.infoasdp.config.DaoSpringConfig;
 
 
 @Configuration

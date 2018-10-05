@@ -25,7 +25,7 @@ public class UserEntity extends AuditEntity implements Serializable{
 	@GeneratedValue(generator = "code-uuid")
 	@GenericGenerator(name = "code-uuid", strategy = "uuid")
 	private String id;
-	private String userId;
+	private String username;
 	private String name;
 	private String noHp;
 	private String alamat;
@@ -57,11 +57,11 @@ public class UserEntity extends AuditEntity implements Serializable{
 	public void setUserRole(UserRoleEntity userRole) {
 		this.userRole = userRole;
 	}
-	public String getUserId() {
-		return userId;
+	public String getUsername() {
+		return username;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public String getNoHp() {
 		return noHp;
@@ -109,7 +109,7 @@ public class UserEntity extends AuditEntity implements Serializable{
 	public static class Constant {
 		private Constant() {}
 		public static final String ID_FIELD = "id";
-		public static final String USER_ID_FIELD = "userId";
+		public static final String USER_ID_FIELD = "username";
 		public static final String NAME_FIELD = "name";
 		public static final String USER_FIELD = "user";
 		public static final String USER_ROLE_FIELD = "userRole";

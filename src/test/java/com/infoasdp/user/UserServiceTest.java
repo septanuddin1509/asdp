@@ -53,7 +53,7 @@ public class UserServiceTest {
 	
 	public UserEntity value(){
 		UserEntity user = new UserEntity();
-		user.setUserId("septa.uddin15@gmail.com");
+		user.setUsername("septa.uddin15@gmail.com");
 		user.setName("SEPTA");
 		user.setAlamat("JAKARTA");
 		user.setPassword("password");

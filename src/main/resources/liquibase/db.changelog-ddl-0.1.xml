@@ -20,7 +20,7 @@
 			<column name="user_role" type="VARCHAR(100)">
 				<constraints nullable="false" foreignKeyName="fk_sys_user_role" references="sys_user_role(user_code)" />
 			</column>
-			<column name="user_id" type="VARCHAR(500)" />
+			<column name="username" type="VARCHAR(500)" />
 			<column name="name" type="VARCHAR(255)" />
 			<column name="no_hp" type="VARCHAR(500)" />
 			<column name="alamat" type="VARCHAR(500)" />

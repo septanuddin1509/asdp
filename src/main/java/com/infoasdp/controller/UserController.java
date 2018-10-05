@@ -1,4 +1,4 @@
-package com.btpn.login.controller;
+package com.infoasdp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

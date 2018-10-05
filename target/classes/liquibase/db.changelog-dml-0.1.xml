@@ -38,7 +38,7 @@
 		<insert tableName="sys_user">
 			<column name="id" value="1001"/>
 			<column name="user_role" value="1"/>
-			<column name="user_id" value="superuser"/>
+			<column name="username" value="superuser"/>
 			<column name="name" value="superuser"/>
 			<column name="valid" value="1"/>
 			<column name="password" value="b4d2b6351f83f11934ea50abb4f949f26f2a3b3800bbe8d0947a1b6156c65923"/>

@@ -1,7 +1,9 @@
 package com.infoasdp.service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -26,9 +28,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.infoasdp.login.entity.UserEntity;
+import com.infoasdp.login.entity.UserRoleEntity;
 import com.infoasdp.repository.UserRepository;
 import com.infoasdp.util.CommonPageUtil;
 import com.infoasdp.util.CommonPaging;
@@ -37,7 +44,7 @@ import com.infoasdp.util.StringFunction;
 import com.infoasdp.util.SystemConstant;
 import com.infoasdp.util.UserException;
 
-public class UserDaoServiceImpl implements UserDaoService{
+public class UserDaoServiceImpl implements UserDetailsService, UserDaoService{
 	
 	@PersistenceContext
 	EntityManager em;
@@ -51,10 +58,10 @@ public class UserDaoServiceImpl implements UserDaoService{
 	@Override
 	public synchronized String saveUser(UserEntity request) throws Exception {
 		UserEntity toUpdate = request;
-		if (isExistUserByUserId(request.getUserId(), request.getId())) {
+		if (isExistUserByUserId(request.getUsername(), request.getId())) {
 			throw new UserException("ALREADY_EXISTS", "User with that User ID already exists !");
 		}
-		if (request == null || StringFunction.isEmpty(request.getUserId())) {
+		if (request == null || StringFunction.isEmpty(request.getUsername())) {
 			throw new UserException("MANDATORY", "User ID is mandatory !");
 		}
 		if (StringFunction.isNotEmpty(request.getId())) {
@@ -113,13 +120,13 @@ public class UserDaoServiceImpl implements UserDaoService{
 
 	@Override
 	public UserEntity getUsersByName(String userId) {
-		return userRepo.findOneByUserId(userId);
+		return userRepo.findOneByUsername(userId);
 	}
 
 	@Override
 	public CommonPaging<UserEntity> getUserWithPaging(String search, String user, int page) {
 		Pageable pageable = pageUtil.generateDefaultPageRequest(page);
-		Page<UserEntity> paging = userRepo.findByUserIdNotAndUserIdContaining(user, search, pageable);
+		Page<UserEntity> paging = userRepo.findByUsernameNotAndUsernameContaining(user, search, pageable);
 		return new CommonPaging<>(paging);
 	}
 	
@@ -138,13 +145,13 @@ public class UserDaoServiceImpl implements UserDaoService{
 		   Message msg = new MimeMessage(session);
 		   msg.setFrom(new InternetAddress("septa.rf2018@gmail.com", false));
 
-		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(request.getUserId()));
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(request.getUsername()));
 		   msg.setSubject("welcome to your new infoASDP Account");
 		   String messageMail = "<html> "
 		   		+ "<body><h3>Hi "+request.getName()+",</h3>"
 		   		+ "<p>"
 		   		+ "Your account already created!<br/>"
-		   		+ "Username : "+request.getUserId()+"<br/>"
+		   		+ "Username : "+request.getUsername()+"<br/>"
 				+ "Password : "+request.getPassword()+"<br/>"
 				+ "Please change your password for security privacy<br/>"
 		   		+ "<h3>Thanks, <br/>Regards,<br/>Admin infoASDP</h3>"
@@ -165,5 +172,18 @@ public class UserDaoServiceImpl implements UserDaoService{
 		   msg.setContent(multipart);
 		   Transport.send(msg);   
 		}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserEntity user = userRepo.findOneByUsername(username);
+		if(user == null){
+			throw new UsernameNotFoundException("Invalid username or password.");
+		}
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority());
+	}
+	
+	private List<SimpleGrantedAuthority> getAuthority() {
+		return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+	}
 	
 }

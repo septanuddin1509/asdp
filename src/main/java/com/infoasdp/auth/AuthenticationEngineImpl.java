@@ -24,7 +24,7 @@ public class AuthenticationEngineImpl implements AuthenticationEngine{
 	public AuthenticatedUser authenticate(String username, String password) throws Exception {
 		AuthenticatedUser usr = new AuthenticatedUser();
 		UserEntity usrDB = userService.getUsersByName(username);
-		if(usrDB==null || usrDB.getUserId()==null || usrDB.getUserId().equals("")) {
+		if(usrDB==null || usrDB.getUsername()==null || usrDB.getUsername().equals("")) {
 			throw new UserException(LoginConstant.USER_DB_NOT_FOUND_ERROR_CODE, LoginConstant.USER_DB_NOT_FOUND_ERROR_DESC);
 		}
 		String salt = LoginConstant.PASSWORD_SALT_KEY;
@@ -35,7 +35,7 @@ public class AuthenticationEngineImpl implements AuthenticationEngine{
 			System.out.println(usrDB.getPassword() + "====" + hashPassword);*/
 			throw new UserException(LoginConstant.INVALID_PASSWORD_DB_ERROR_CODE, LoginConstant.INVALID_PASSWORD_DB_ERROR_DESC);
 		}
-		usr.setUserId(usrDB.getUserId());
+		usr.setUserId(usrDB.getUsername());
 		usr.setName(usrDB.getName());
 
 		List<MenuEntity> lstMenu= menuService.getMenuByUser(usrDB.getUserRole().getUserCode());

@@ -6,9 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.infoasdp.auth.AuthenticationEngine;
-import com.infoasdp.auth.AuthenticationEngineImpl;
-
 import liquibase.integration.spring.SpringLiquibase;
 
 /**
@@ -21,7 +18,7 @@ public class Application
     public static void main( String[] args )
     {
     	SpringApplication.run(Application.class, args);
-    }
+    } 
     
     @Bean
 	public SpringLiquibase liquibase(DataSource datasource) {
@@ -29,10 +26,5 @@ public class Application
 		config.setDataSource(datasource);
 		config.setChangeLog("classpath:/liquibase/db.changelog-master.xml");
 		return config;
-	}
-    
-    @Bean
-	public AuthenticationEngine authenticationEngineImpl() {
-		return new AuthenticationEngineImpl();
 	}
 }
